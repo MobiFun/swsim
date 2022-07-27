@@ -1243,6 +1243,15 @@ swicc_ret_et sim_apduh_demux(swicc_st *const swicc_state,
                              swicc_apdu_res_st *const res,
                              uint32_t const procedure_count)
 {
+    printf("{\n");
+    printf("\t\"type\": \"cmd\",\n");
+    printf("\t\"cmd\": \"%02X %02X %02X %02X %02X ", cmd->hdr->cla.raw, cmd->hdr->ins,
+                                cmd->hdr->p1, cmd->hdr->p2, *cmd->p3);
+    for (int i = 0; i < cmd->data->len; i++ ) {
+        printf("%02X ", cmd->data->b[i]);
+    }
+    printf("\",\n");
+
     swicc_ret_et ret = SWICC_RET_APDU_UNHANDLED;
     switch (cmd->hdr->cla.type)
     {
@@ -1393,5 +1402,11 @@ swicc_ret_et sim_apduh_demux(swicc_st *const swicc_state,
     default:
         break;
     }
+    printf("\t\"rsp\": \"");
+    for (int i = 0; i < res->data.len; i++) {
+        printf("%02X ", res->data.b[i]);
+    }
+    printf("%02X %02X", res->sw1, res->sw2);
+    printf("\"\n},\n");
     return ret;
 }
